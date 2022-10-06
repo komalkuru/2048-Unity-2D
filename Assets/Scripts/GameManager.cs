@@ -22,7 +22,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private int score = 0;
 
-
     private List<NodeManager> nodeList;
     private List<BlockManager> blockList;
     private GameState gameState;
@@ -104,14 +103,14 @@ public class GameManager : MonoBehaviour
             SpawnBlock(node, Random.value > 0.8f ? 4 : 2);
         }
 
-        if (freeNodes.Count() == 0 && !blockManager.CanMerge(blockManager.Value))
-        {            
-            Debug.Log("not possible");
-            // You lost the game
-            ChangeGameState(GameState.Lose);
-            return;
-        }
+        /*if (freeNodes.Count() == 0)
+        {
+            Debug.Log("last Block");
 
+            // You lost the game
+            //ChangeGameState(GameState.Lose);
+            return;
+        }*/
         ChangeGameState(blockList.Any(b => b.Value == winCondition) ? GameState.Win : GameState.WaitingInput);
     }
 
@@ -145,16 +144,16 @@ public class GameManager : MonoBehaviour
                     // If it's possible to merge, set merge
                     if (possibleNode.OccupiedBlock != null && possibleNode.OccupiedBlock.CanMerge(block.Value))
                     {                        
-                        block.MergeBlock(possibleNode.OccupiedBlock);                        
+                        block.MergeBlock(possibleNode.OccupiedBlock);
+                        //Debug.Log(possibleNode.OccupiedBlock);                        
                     }
                     // Otherwise, can we move to this spot?
                     else if (possibleNode.OccupiedBlock == null)
                     {
                         next = possibleNode;
-                    }                              
+                    }
                     // None hit? End do while loop
-                }
-
+                } 
             } while (next != block.Node);
 
             block.transform.DOMove(block.Node.pos, travelTime);
@@ -199,6 +198,11 @@ public class GameManager : MonoBehaviour
     NodeManager GetNodeAtPosition(Vector2 pos)
     {
         return nodeList.FirstOrDefault(n => n.pos == pos);
+    }
+
+    NodeManager GetLastNodeAtPosition(Vector2 pos)
+    {
+        return nodeList.LastOrDefault(n => n.pos == pos);
     }
 }
 
